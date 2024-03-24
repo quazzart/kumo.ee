@@ -69,14 +69,14 @@
                 },
             }
 
-            setInterval(move, 1000 / 60, cat)
-
             e.addEventListener("click", function() {
                 confetti()
             })
+
+            loop(cat)
         })
 
-        function move(cat) {
+        function loop(cat) {
             // Update position
             cat.actual.left += cat.dx
             cat.actual.top += cat.dy
@@ -113,6 +113,8 @@
             // Set new position to the element
             cat.elem.style.left = cat.actual.left + "px"
             cat.elem.style.top = cat.actual.top + "px"
+
+            requestAnimationFrame(() => loop(cat))
         }
 
         /**
