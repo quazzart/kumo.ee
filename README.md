@@ -1,1 +1,1 @@
-Random page
+# Some random stuffs for my website

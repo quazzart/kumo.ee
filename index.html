@@ -5,30 +5,188 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Kumo</title>
+    <title>Kumo's cat</title>
     <style>
         html, body, div, p {
             margin: 0;
             padding: 0;
         }
 
-        .content {
-            width: 100dvw;
-            height: 100dvh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        body {
+            background: white;
         }
 
-        .cat {
+        #cat {
             width: min(50dvw, 50dvh);
             height: auto;
+            position: absolute;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+    <script>
+        let jsConfetti
+
+        window.addEventListener("load", function () {
+            jsConfetti = new JSConfetti()
+
+            // Offsets of the rect to include only the cat in the image
+            // but not the whole image with white background
+            const scales = {
+                left:   110 / 480,
+                right:  135 / 480,
+                top:    18 / 480,
+                bottom: 20 / 480,
+            }
+
+            const e = document.getElementById("cat")
+            const {width: w, height: h} = e.getBoundingClientRect()
+
+            // Move cat to center
+            const ws = getWindowSize()
+            e.style.left = ws.width * 0.5 - w * 0.5 + "px"
+            e.style.top = ws.height * 0.5 - h * 0.5 + "px"
+
+            const rect = e.getBoundingClientRect()
+
+            const angle = Math.random() * 2 * Math.PI  // radians
+            const speed = 5  // px/frame
+
+            const cat = {
+                elem:    e,
+                dx:      Math.cos(angle) * speed,
+                dy:      -Math.sin(angle) * speed,
+                angle,
+                speed,
+                actual:  {
+                    left:   rect.left,
+                    top:    rect.top,
+                },
+                virtual: {
+                    width:  rect.width * (1 - scales.left - scales.right),
+                    height: rect.height * (1 - scales.top - scales.bottom),
+                    left:   rect.left + rect.width * scales.left,
+                    top:    rect.top + rect.height * scales.top,
+                },
+            }
+
+            setInterval(move, 1000 / 60, cat)
+
+            e.addEventListener("click", function() {
+                confetti()
+            })
+        })
+
+        function move(cat) {
+            // Update position
+            cat.actual.left += cat.dx
+            cat.actual.top += cat.dy
+            cat.virtual.left += cat.dx
+            cat.virtual.top += cat.dy
+
+            let oob = isOob(cat.virtual, true)
+
+            // Celebrate if it touches corner
+            if (oob.x.out && oob.y.out) {
+                setTimeout(confetti, 0)
+            }
+
+            // Randomize angle slightly
+            if (oob.x.out || oob.y.out) {
+                // New angle
+                cat.angle = Math.atan2(-cat.dy, cat.dx)
+                cat.angle += 0.02 * Math.sign(Math.random() - 0.5)
+                // New deltas
+                cat.dx = Math.cos(cat.angle) * cat.speed
+                cat.dy = -Math.sin(cat.angle) * cat.speed
+            }
+
+            // Reverse moving direction if needed
+            if (oob.x.out) cat.dx = -cat.dx
+            if (oob.y.out) cat.dy = -cat.dy
+
+            // To reflect the value it needs to be subbed twice
+            cat.actual.left -= oob.x.by * 2
+            cat.actual.top -= oob.y.by * 2
+            cat.virtual.left -= oob.x.by * 2
+            cat.virtual.top -= oob.y.by * 2
+
+            // Set new position to the element
+            cat.elem.style.left = cat.actual.left + "px"
+            cat.elem.style.top = cat.actual.top + "px"
+        }
+
+        /**
+         * Checks if an element is "out of bounds"
+         * @param rect Rect of an element (top, left, width, height)
+         * @param zero Whether zero values (on edge) is considered OOB
+         * @returns {{x: {out: boolean, by: number}, y: {out: boolean, by: number}}}
+         *          Boolean flags for x and y separately, true means it's
+         *          OOB in particular axis. If the axis is not oob, the value is 0
+         */
+        function isOob(rect, zero) {
+            const ret = {
+                x: {out: false, by: 0},
+                y: {out: false, by: 0}
+            }
+
+            const {
+                width:  ww,
+                height: wh
+            } = getWindowSize()
+
+            const
+                left = rect.left,
+                right = rect.right || rect.left + rect.width,
+                top = rect.top,
+                bottom = rect.bottom || rect.top + rect.height
+
+            // Horizontally
+            if (left < 0) {
+                ret.x.out = true
+                ret.x.by = left
+            } else if (right > ww) {
+                ret.x.out = true
+                ret.x.by = right - ww
+            }
+
+            // Vertically
+            if (top < 0) {
+                ret.y.out = true
+                ret.y.by = top
+            } else if (bottom > wh) {
+                ret.y.out = true
+                ret.y.by = bottom - wh
+            }
+
+            if (!zero) {
+                ret.x.out = ret.x.by !== 0
+                ret.y.out = ret.y.by !== 0
+            }
+
+            return ret
+        }
+
+        function confetti() {
+            jsConfetti.addConfetti({
+                emojis: ['😹', '😻', '🙀', '😽', '😸', '😼', '🐈', '🐈', '🐈'],
+                emojiSize: 150,
+            })
+        }
+
+        /**
+         * Calculates inner window size
+         * @returns {{width: number, height: number}}
+         */
+        function getWindowSize() {
+            return {
+                width:  window.innerWidth || document.documentElement.clientWidth,
+                height: window.innerHeight || document.documentElement.clientHeight
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
 </head>
 <body>
-    <div class="content">
-        <img class="cat" src="cat.jpg" alt="cat">
-    </div>
+<img id="cat" src="cat.jpg" alt="cat">
 </body>
 </html>
