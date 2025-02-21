@@ -1,0 +1,158 @@
+body {
+    margin-top: 50px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+input {
+    width: 60px;
+    padding: 10px;
+    font-size: 1em;
+    text-align: center;
+}
+
+.input-group + .input-group {
+    margin-top: 10px;
+}
+
+#labelInput {
+    width: 8em;
+}
+
+#timer {
+    font-size: 4em;
+    margin: 20px 20px 0;
+}
+
+#elapsed {
+    font-size: 1.5em;
+}
+
+#timer, #elapsed {
+    font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Mono", "Source Code Pro","Fira Mono", "Droid Sans Mono", "Consolas", "Courier New", monospace;
+}
+
+.expiring {
+    color: red;
+}
+
+.expired {
+    animation: blink 1s linear 5;
+}
+
+#buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    width: 4in;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+#buttons>div {
+    flex-grow: 1;
+    margin: 0 5px;
+}
+
+.button {
+    width: 100%;
+    padding: 30px 0;
+    
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    cursor: pointer;
+
+    font-size: 1.2em;
+    border-radius: 15px;
+    background-color: #e6e6e6;
+}
+
+.button:active, .button:focus {
+    outline: 3px solid #3975f8;
+}
+
+.button:enabled {
+    cursor: pointer;
+    color: #3975f8
+}
+
+.button:disabled {
+    cursor: not-allowed;
+}
+
+#history {
+    width: 90%;
+    max-width: 30em;
+    margin: 4em auto;
+    text-align: left;
+}
+
+#history:not(:has( .history-entry)) {
+    display: none;
+}
+
+#history>h2 {
+    text-align: center;
+}
+
+.history-entry {
+    display: flex;
+    justify-content: space-between;
+
+    margin: 10px 0;
+    padding: 10px;
+
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.history-entry>div {
+    align-self: center;
+}
+
+.remove-history-entry {
+    cursor: pointer;
+    padding: 10px;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+}
+
+#clear-history {
+    cursor: pointer;
+    font-size: 0.8em;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+}
+
+@keyframes blink {
+    0% {
+        color: black;
+    }
+
+    40% {
+        color: black;
+    }
+
+    50% {
+        color: red;
+    }
+
+    90% {
+        color: red;
+    }
+
+    100% {
+        color: black;
+    }
+}
